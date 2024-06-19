@@ -43,7 +43,7 @@ func ReadFile(fp string, prec uint) ([]*big.Float, error) {
 	return numbers, nil
 }
 
-func FloatSum(numbers []*big.Float, prec uint) big.Float {
+func CompensatedSum(numbers []*big.Float, prec uint) big.Float {
 	sum := new(big.Float).SetPrec(prec)
 	comp := new(big.Float).SetPrec(prec)
 
@@ -61,19 +61,33 @@ func FloatSum(numbers []*big.Float, prec uint) big.Float {
 	return *sum
 }
 
+func NaiveSum(numbers []*big.Float, prec uint) big.Float {
+	sum := new(big.Float).SetPrec(prec)
+
+	for _, number := range numbers {
+		sum.Add(sum, number)
+	}
+
+	return *sum
+}
+
 func main() {
 	if len(os.Args) < 2 {
 		log.Fatal("missing filename argument")
+	} else if len(os.Args) > 2 {
+		log.Fatal("too many arguments")
 	}
 	filename := os.Args[1]
 
-	var prec uint = 256
+	var prec uint = 128
 	numbers, err := ReadFile(filename, prec)
 	if err != nil {
 		log.Fatalf("error reading file: %s", err)
 	}
 
-	sum := FloatSum(numbers, prec)
+	sum := CompensatedSum(numbers, prec)
+	naiveSum := NaiveSum(numbers, prec)
 
-	fmt.Println(&sum)
+	fmt.Printf("Compensated Sum: %s\n", sum.Text('g', -1))
+	fmt.Printf("Naive Sum: %s\n", naiveSum.Text('g', -1))
 }
