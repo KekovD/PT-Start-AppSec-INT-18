@@ -6,6 +6,7 @@ import (
 	"log"
 	"math/big"
 	"os"
+	"sort"
 )
 
 func ReadFile(fp string, prec uint) ([]*big.Float, error) {
@@ -44,18 +45,26 @@ func ReadFile(fp string, prec uint) ([]*big.Float, error) {
 }
 
 func CompensatedSum(numbers []*big.Float, prec uint) big.Float {
+	absI := new(big.Float).SetPrec(prec)
+	absJ := new(big.Float).SetPrec(prec)
+
+	sort.Slice(numbers, func(i, j int) bool {
+		absI = absI.Abs(numbers[i])
+		absJ = absJ.Abs(numbers[j])
+		return absI.Cmp(absJ) < 0
+	})
+
 	sum := new(big.Float).SetPrec(prec)
 	comp := new(big.Float).SetPrec(prec)
 
-	x := new(big.Float).SetPrec(prec)
-	y := new(big.Float).SetPrec(prec)
+	temp := new(big.Float).SetPrec(prec)
 
 	for _, number := range numbers {
-		x.Sub(number, comp)
-		y.Add(sum, x)
-		comp.Sub(y, sum)
-		comp.Sub(comp, x)
-		sum.Set(y)
+		temp.Sub(number, comp)
+		comp.Add(sum, temp)
+		comp.Sub(comp, sum)
+		comp.Sub(comp, temp)
+		sum.Add(sum, temp)
 	}
 
 	return *sum
