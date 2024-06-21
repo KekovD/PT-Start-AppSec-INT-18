@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"os"
+	"strconv"
 	"time"
 
 	sw "github.com/RussellLuo/slidingwindow"
@@ -83,8 +85,12 @@ var (
 func init() {
 	errorResponse, _ = json.Marshal(ErrorResponse{Error: "Too many requests"})
 
+	redisHost := os.Getenv("REDIS_HOST")
+	redisPortStr := os.Getenv("REDIS_PORT")
+	redisPort, _ := strconv.Atoi(redisPortStr)
+
 	client := redis.NewClient(&redis.Options{
-		Addr: "redis:6379",
+		Addr: fmt.Sprintf("%s:%d", redisHost, redisPort),
 		DB:   1,
 	})
 
@@ -98,6 +104,9 @@ func init() {
 }
 
 func main() {
+	goappPortStr := os.Getenv("GOAPP_PORT")
+	goappPort, _ := strconv.Atoi(goappPortStr)
+
 	requestHandler := func(ctx *fhttp.RequestCtx) {
 		if allowed := limiter.Allow(); !allowed {
 			log.Printf("Too many requests at %s\n", time.Now().Format(time.RFC3339Nano))
@@ -135,8 +144,8 @@ func main() {
 		ctx.SetBody(successResponse)
 	}
 
-	fmt.Println("Server is running on port 8080...")
-	if err := fhttp.ListenAndServe(":8080", requestHandler); err != nil {
+	fmt.Println("Server is running on port", goappPort, "...")
+	if err := fhttp.ListenAndServe(fmt.Sprintf(":%d", goappPort), requestHandler); err != nil {
 		fmt.Printf("Error in ListenAndServe: %s", err)
 	}
 }

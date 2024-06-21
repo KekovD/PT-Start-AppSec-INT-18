@@ -4,7 +4,7 @@ services:
   redis:
     image: redis:latest
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT}:${REDIS_PORT}"
     networks:
       - backend
 
@@ -12,8 +12,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
     ports:
-      - "8080:8080"
+      - "${GOAPP_PORT}:${GOAPP_PORT}"
     networks:
       - backend
     depends_on:

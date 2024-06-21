@@ -12,6 +12,9 @@
 # Test binary, built with `go test -c`
 *.test
 
+# Environment file
+calculation_service/.env
+
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
