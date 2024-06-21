@@ -9,16 +9,16 @@ import (
 )
 
 func main() {
-	goappPortStr := os.Getenv("GOAPP_PORT")
-	goappPort, _ := strconv.Atoi(goappPortStr)
+	calcPortStr := os.Getenv("CALCULATION_PORT")
+	calcPort, _ := strconv.Atoi(calcPortStr)
 
-	fmt.Println("Server is running on port", goappPort, "...")
+	fmt.Println("Server is running on port", calcPort, "...")
 
 	requestHandler := func(ctx *fasthttp.RequestCtx) {
 		controller.RequestHandler(ctx)
 	}
 
-	if err := fasthttp.ListenAndServe(fmt.Sprintf(":%d", goappPort), requestHandler); err != nil {
+	if err := fasthttp.ListenAndServe(fmt.Sprintf(":%d", calcPort), requestHandler); err != nil {
 		fmt.Printf("Error in ListenAndServe: %s", err)
 	}
 }

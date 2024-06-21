@@ -20,7 +20,6 @@ var (
 func init() {
 	errorResponse, _ = json.Marshal(model.ErrorResponse{Error: "Too many requests"})
 
-	// Инициализация Redis и sliding window limiter
 	datastore = service.NewRedisDatastore()
 	size := time.Second
 	limiter, _ = sw.NewLimiter(size, 5, func() (sw.Window, sw.StopFunc) {

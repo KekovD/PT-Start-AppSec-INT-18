@@ -8,7 +8,7 @@ services:
     networks:
       - backend
 
-  goapp:
+  calculation:
     build:
       context: .
       dockerfile: Dockerfile
@@ -18,7 +18,7 @@ services:
       - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
     ports:
-      - "${GOAPP_PORT}:${GOAPP_PORT}"
+      - "${CALCULATION_PORT}:${CALCULATION_PORT}"
     networks:
       - backend
     depends_on:
