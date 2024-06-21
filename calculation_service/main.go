@@ -13,23 +13,34 @@ import (
 )
 
 type SuccessResponse struct {
-	X       float64 `json:"X"`
-	Y       float64 `json:"Y"`
-	IsEqual string  `json:"IsEqual"`
+	X       float64 `json:"x"`
+	Y       float64 `json:"y"`
+	IsEqual string  `json:"is_equal"`
 }
 
 type ErrorResponse struct {
 	Error string `json:"error"`
 }
 
+type Values [6]float64
+
+func (v *Values) UnmarshalJSON(data []byte) error {
+	var tmp []float64
+	if err := json.Unmarshal(data, &tmp); err != nil {
+		return err
+	}
+	if len(tmp) != 6 {
+		return fmt.Errorf("incorrect number of values: expected 6, got %d", len(tmp))
+	}
+	for i := range tmp {
+		v[i] = tmp[i]
+	}
+	return nil
+}
+
 type RequestData struct {
-	X1 float64 `json:"X1"`
-	X2 float64 `json:"X2"`
-	X3 float64 `json:"X3"`
-	Y1 float64 `json:"Y1"`
-	Y2 float64 `json:"Y2"`
-	Y3 float64 `json:"Y3"`
-	E  int     `json:"E"`
+	Values Values `json:"values"`
+	E      int    `json:"e"`
 }
 
 type RedisDatastore struct {
@@ -98,15 +109,15 @@ func main() {
 
 		var data RequestData
 		if err := json.Unmarshal(ctx.PostBody(), &data); err != nil {
+			log.Printf("Error decoding JSON: %v\n", err)
 			ctx.SetStatusCode(fhttp.StatusBadRequest)
 			ctx.SetContentType("application/json")
-			errorResponse, _ := json.Marshal(ErrorResponse{Error: "Invalid request payload"})
-			ctx.SetBody(errorResponse)
+			ctx.SetBody([]byte(`{"error": "Invalid request payload"}`))
 			return
 		}
 
-		X := math.Round((data.X1/data.X2)*data.X3*math.Pow(10, float64(data.E))) / math.Pow(10, float64(data.E))
-		Y := math.Round((data.Y1/data.Y2)*data.Y3*math.Pow(10, float64(data.E))) / math.Pow(10, float64(data.E))
+		X := round((data.Values[0]/data.Values[1])*data.Values[2], data.E)
+		Y := round((data.Values[3]/data.Values[4])*data.Values[5], data.E)
 		IsEqual := "F"
 		if X == Y {
 			IsEqual = "T"
@@ -128,4 +139,9 @@ func main() {
 	if err := fhttp.ListenAndServe(":8080", requestHandler); err != nil {
 		fmt.Printf("Error in ListenAndServe: %s", err)
 	}
+}
+
+func round(val float64, precision int) float64 {
+	factor := math.Pow(10, float64(precision))
+	return math.Round(val*factor) / factor
 }
