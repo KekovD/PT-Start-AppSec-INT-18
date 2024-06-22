@@ -7,25 +7,8 @@ import (
 
 	"calculation_service/model"
 	"calculation_service/service"
-	sw "github.com/RussellLuo/slidingwindow"
 	fhttp "github.com/valyala/fasthttp"
 )
-
-var (
-	errorResponse []byte
-	limiter       *sw.Limiter
-	datastore     service.Datastore
-)
-
-func init() {
-	errorResponse, _ = json.Marshal(model.ErrorResponse{Error: "Too many requests"})
-
-	datastore = service.NewRedisDatastore()
-	size := time.Second
-	limiter, _ = sw.NewLimiter(size, 5, func() (sw.Window, sw.StopFunc) {
-		return sw.NewSyncWindow("test", sw.NewBlockingSynchronizer(datastore, 500*time.Millisecond))
-	})
-}
 
 func RequestHandler(ctx *fhttp.RequestCtx) {
 	if allowed := limiter.Allow(); !allowed {
