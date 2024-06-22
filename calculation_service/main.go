@@ -10,7 +10,11 @@ import (
 
 func main() {
 	calcPortStr := os.Getenv("CALCULATION_PORT")
-	calcPort, _ := strconv.Atoi(calcPortStr)
+	calcPort, err := strconv.Atoi(calcPortStr)
+
+	if err != nil {
+		panic(fmt.Sprintf("CALCULATION_PORT is not a number: %s", calcPortStr))
+	}
 
 	fmt.Println("Server is running on port", calcPort, "...")
 

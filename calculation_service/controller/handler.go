@@ -11,6 +11,13 @@ import (
 )
 
 func RequestHandler(ctx *fhttp.RequestCtx) {
+	if string(ctx.Method()) != fhttp.MethodPost {
+		ctx.SetStatusCode(fhttp.StatusMethodNotAllowed)
+		ctx.SetContentType("application/json")
+		ctx.SetBody([]byte(`{"error": "Method not allowed"}`))
+		return
+	}
+
 	if allowed := limiter.Allow(); !allowed {
 		log.Printf("Too many requests at %s\n", time.Now().Format(time.RFC3339Nano))
 		ctx.SetStatusCode(fhttp.StatusPaymentRequired)
