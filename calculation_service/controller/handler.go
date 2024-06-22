@@ -61,8 +61,11 @@ func parseRequestBody(ctx *fhttp.RequestCtx) (model.RequestData, error) {
 }
 
 func processRequest(ctx *fhttp.RequestCtx, data model.RequestData) {
-	X := service.CalculateX(data)
-	Y := service.CalculateY(data)
+	E := data.E
+
+	X := service.CalculateValue(data.Values[0], data.Values[1], data.Values[2], E)
+	Y := service.CalculateValue(data.Values[3], data.Values[4], data.Values[5], E)
+
 	IsEqual := "F"
 	if X == Y {
 		IsEqual = "T"
