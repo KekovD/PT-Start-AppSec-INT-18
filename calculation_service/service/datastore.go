@@ -29,6 +29,6 @@ func NewRedisDatastore(
 
 	return &RedisDatastore{
 		client: client,
-		ttl:    redisTtl * time.Second,
+		ttl:    redisTtl,
 	}
 }

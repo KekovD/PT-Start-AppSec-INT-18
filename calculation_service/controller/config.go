@@ -10,9 +10,8 @@ import (
 )
 
 var (
-	errorResponse []byte
-	limiter       *sw.Limiter
-	datastore     service.Datastore
+	limiter   *sw.Limiter
+	datastore service.Datastore
 )
 
 func parseEnvVariables() (string, int, int, time.Duration, time.Duration, time.Duration, int64, string) {
