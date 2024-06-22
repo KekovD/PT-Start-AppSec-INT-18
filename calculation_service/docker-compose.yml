@@ -7,18 +7,17 @@ services:
       - "${REDIS_PORT}:${REDIS_PORT}"
     networks:
       - backend
+    env_file:
+      - .env
 
   calculation:
     build:
       context: .
       dockerfile: Dockerfile
-    env_file:
-      - .env
-    environment:
-      - REDIS_HOST=${REDIS_HOST}
-      - REDIS_PORT=${REDIS_PORT}
     ports:
       - "${CALCULATION_PORT}:${CALCULATION_PORT}"
+    env_file:
+      - .env
     networks:
       - backend
     depends_on:

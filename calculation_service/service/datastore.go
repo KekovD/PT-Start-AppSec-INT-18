@@ -2,8 +2,6 @@ package service
 
 import (
 	"fmt"
-	"os"
-	"strconv"
 	"time"
 
 	"github.com/go-redis/redis"
@@ -19,15 +17,18 @@ type RedisDatastore struct {
 	ttl    time.Duration
 }
 
-func NewRedisDatastore() *RedisDatastore {
-	redisHost := os.Getenv("REDIS_HOST")
-	redisPortStr := os.Getenv("REDIS_PORT")
-	redisPort, _ := strconv.Atoi(redisPortStr)
-
+func NewRedisDatastore(
+	redisHost string,
+	redisPort int,
+	redisDatabase int,
+	redisTtl time.Duration) *RedisDatastore {
 	client := redis.NewClient(&redis.Options{
 		Addr: fmt.Sprintf("%s:%d", redisHost, redisPort),
-		DB:   1,
+		DB:   redisDatabase,
 	})
 
-	return &RedisDatastore{client: client, ttl: 2 * time.Second}
+	return &RedisDatastore{
+		client: client,
+		ttl:    redisTtl * time.Second,
+	}
 }
