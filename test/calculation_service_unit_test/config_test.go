@@ -1,4 +1,4 @@
-package controller_test
+package calculation_service_unit_test
 
 import (
 	"calculation_service/controller"
