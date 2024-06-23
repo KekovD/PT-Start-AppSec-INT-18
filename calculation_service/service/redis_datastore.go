@@ -8,14 +8,17 @@ import (
 
 func (d *RedisDatastore) Add(key string, start, value int64) (int64, error) {
 	k := d.fullKey(key, start)
-	c, err := d.client.IncrBy(k, value).Result()
 
+	pipe := d.client.Pipeline()
+	incrCmd := pipe.IncrBy(k, value)
+	expireCmd := pipe.Expire(k, d.ttl)
+
+	_, err := pipe.Exec()
 	if err != nil {
 		return 0, err
 	}
 
-	err = d.client.Expire(k, d.ttl).Err()
-	return c, err
+	return incrCmd.Val(), expireCmd.Err()
 }
 
 func (d *RedisDatastore) Get(key string, start int64) (int64, error) {
