@@ -87,6 +87,18 @@ SYNC_WINDOW_KEY=window
 }
 ```
 
+Пример запроса:
+```shell
+curl -X POST http://localhost:8080   -H 'Content-Type: application/json'   -d '{
+    "values": [1, 2.12345, 3, 1, 2, 3],
+    "e": 1
+  }'
+```
+
+И ответа:
+```json
+{"x":1.4,"y":1.5,"is_equal":"F"}
+```
 
 ### Пояснение к решению
 
