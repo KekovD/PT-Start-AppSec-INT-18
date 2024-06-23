@@ -34,6 +34,7 @@
 
 Задание находится в директории `calculation_service`.
 
+Также в `test/calculation_service_unit_test` находятся юнит-тесты.
 
 ### Запуск
 
