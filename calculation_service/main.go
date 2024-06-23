@@ -9,6 +9,8 @@ import (
 )
 
 func main() {
+	controller.Init()
+
 	calcPortStr := os.Getenv("CALCULATION_PORT")
 	calcPort, err := strconv.Atoi(calcPortStr)
 

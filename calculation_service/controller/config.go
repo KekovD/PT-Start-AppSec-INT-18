@@ -14,7 +14,7 @@ var (
 	datastore service.Datastore
 )
 
-func parseEnvVariables() (string, int, int, time.Duration, time.Duration, time.Duration, int64, string) {
+func ParseEnvVariables() (string, int, int, time.Duration, time.Duration, time.Duration, int64, string) {
 	redisHost := os.Getenv("REDIS_HOST")
 	redisPortStr := os.Getenv("REDIS_PORT")
 	redisDatabaseStr := os.Getenv("REDIS_DATABASE")

@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-func init() {
+func Init() {
 	const ttlMultiplier = 2
 
 	defer func() {
@@ -17,7 +17,7 @@ func init() {
 		}
 	}()
 
-	redisHost, redisPort, redisDatabase, redisTtl, syncInterval, interval, limit, syncWindowKey := parseEnvVariables()
+	redisHost, redisPort, redisDatabase, redisTtl, syncInterval, interval, limit, syncWindowKey := ParseEnvVariables()
 
 	if redisTtl < interval*ttlMultiplier {
 		panic(fmt.Sprintf("redisTtl (%v) must be at least twice as large as interval (%v)", redisTtl, interval))

@@ -1,0 +1,6 @@
+go 1.22
+
+use (
+	test/calculation_service_unit_test
+	calculation_service
+)
