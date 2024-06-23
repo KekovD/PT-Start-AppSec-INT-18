@@ -11,23 +11,23 @@ import (
 )
 
 func RequestHandler(ctx *fhttp.RequestCtx) {
-	if !IsMethodAllowed(ctx) {
+	if !isMethodAllowed(ctx) {
 		return
 	}
 
-	if !IsRequestAllowed(ctx) {
+	if !isRequestAllowed(ctx) {
 		return
 	}
 
-	data, err := ParseRequestBody(ctx)
+	data, err := parseRequestBody(ctx)
 	if err != nil {
 		return
 	}
 
-	ProcessRequest(ctx, data)
+	processRequest(ctx, data)
 }
 
-func IsMethodAllowed(ctx *fhttp.RequestCtx) bool {
+func isMethodAllowed(ctx *fhttp.RequestCtx) bool {
 	if string(ctx.Method()) != fhttp.MethodPost {
 		ctx.SetStatusCode(fhttp.StatusMethodNotAllowed)
 		ctx.SetContentType("application/json")
@@ -37,7 +37,7 @@ func IsMethodAllowed(ctx *fhttp.RequestCtx) bool {
 	return true
 }
 
-func IsRequestAllowed(ctx *fhttp.RequestCtx) bool {
+func isRequestAllowed(ctx *fhttp.RequestCtx) bool {
 	if allowed := limiter.Allow(); !allowed {
 		log.Printf("Too many requests at %s\n", time.Now().Format(time.RFC3339Nano))
 		ctx.SetStatusCode(fhttp.StatusPaymentRequired)
@@ -48,7 +48,7 @@ func IsRequestAllowed(ctx *fhttp.RequestCtx) bool {
 	return true
 }
 
-func ParseRequestBody(ctx *fhttp.RequestCtx) (model.RequestData, error) {
+func parseRequestBody(ctx *fhttp.RequestCtx) (model.RequestData, error) {
 	var data model.RequestData
 	if err := json.Unmarshal(ctx.PostBody(), &data); err != nil {
 		log.Printf("Error decoding JSON: %v\n", err)
@@ -60,7 +60,7 @@ func ParseRequestBody(ctx *fhttp.RequestCtx) (model.RequestData, error) {
 	return data, nil
 }
 
-func ProcessRequest(ctx *fhttp.RequestCtx, data model.RequestData) {
+func processRequest(ctx *fhttp.RequestCtx, data model.RequestData) {
 	E := data.E
 
 	X := service.CalculateValue(data.Values[0], data.Values[1], data.Values[2], E)
